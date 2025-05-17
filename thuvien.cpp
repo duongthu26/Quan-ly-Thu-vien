@@ -13,19 +13,19 @@ using namespace std;
 //Class độc giả
 class DocGia{
     protected:
-        string maDocGia;
+        string maThe;
         string Hovaten;
         string ngaysinh;
         string gioitinh;
         string diachi;
         string soDienthoai;
     public:
-        void dangkyThe(string maDocGia, string Hovaten, string ngaysinh, string gioitinh, string diachi, string soDienthoai){
+        void dangkyThe(string maThe, string Hovaten, string ngaysinh, string gioitinh, string diachi, string soDienthoai){
             fstream danhsachThe;
             danhsachThe.open("danhsachDocGia.txt", ios::out | ios::app);
             if (danhsachThe.is_open()){
                 cout << "Nhap ma doc gia: " << endl;
-                getline(cin, maDocGia);
+                getline(cin, maThe);
                 cout << "Nhap ho va ten doc gia: " << endl;
                 getline(cin, Hovaten);
                 cout << "Nhap ngay sinh cua doc gia: " << endl;
@@ -37,7 +37,7 @@ class DocGia{
                 cout << "Nhap so dien thoai cua doc gia: " << endl;
                 getline(cin, soDienthoai);
 
-                danhsachThe << maDocGia << ","
+                danhsachThe << maThe << ","
                             << Hovaten << ","
                             << ngaysinh << ","
                             << gioitinh << ","
@@ -51,7 +51,7 @@ class DocGia{
             }
         }
 
-        void xoaThe(string maDocGia){
+        void xoaThe(string maThe){
             fstream danhsachThe;
             danhsachThe.open("danhsachDocGia.txt", ios::in);
             if (danhsachThe.is_open()){
@@ -60,7 +60,7 @@ class DocGia{
                 while (getline(danhsachThe, line)){
                     DocGia docgia;
                     stringstream ss(line);
-                    getline(ss, docgia.maDocGia, ',');
+                    getline(ss, docgia.maThe, ',');
                     getline(ss, docgia.Hovaten, ',');
                     getline(ss, docgia.ngaysinh, ',');
                     getline(ss, docgia.gioitinh, ',');
@@ -72,8 +72,8 @@ class DocGia{
 
                 ofstream outFile("danhsachDocGia.txt", ios::trunc);
                 for (DocGia& dg : dsDocGia){
-                    if (dg.maDocGia != maDocGia){
-                        outFile << dg.maDocGia << ","
+                    if (dg.maThe != maThe){
+                        outFile << dg.maThe << ","
                                 << dg.Hovaten << ","
                                 << dg.ngaysinh << ","
                                 << dg.gioitinh << ","
@@ -86,11 +86,55 @@ class DocGia{
             }
         }
 
+        void HienthidsThe(){
+            fstream danhsachThe;
+            danhsachThe.open("danhsachDocGia.txt", ios::in);
+            string line;
+            int count = 0;
+            cout << "===== DANH SÁCH ĐỘC GIẢ =====" << endl;
+            cout << left << setw(10) << "Ma The" 
+                 << setw(25) << "Họ và tên" 
+                 << setw(15) << "Ngày sinh" 
+                 << setw(10) << "Giới tính" 
+                 << setw(25) << "Địa chỉ" 
+                 << setw(15) << "Số điện thoại" << endl;
+            cout << string(85, '-') << endl;
+
+            while (getline(danhsachThe, line)) {
+                stringstream ss(line);
+                DocGia docgia;
+
+                getline(ss, docgia.maThe, ',');
+                getline(ss, docgia.Hovaten, ',');
+                getline(ss, docgia.ngaysinh, ',');
+                getline(ss, docgia.gioitinh, ',');
+                getline(ss, docgia.diachi, ',');
+                getline(ss, docgia.soDienthoai, ',');
+
+                
+                cout << left << setw(10) << docgia.maThe 
+                     << setw(25) << docgia.Hovaten 
+                     << setw(15) << docgia.ngaysinh 
+                     << setw(10) << docgia.gioitinh
+                     << setw(25) << docgia.diachi
+                     << setw(15) << docgia.soDienthoai << endl;
+                count++;
+            }
+            
+            if (count == 0) {
+                cout << "Khong co du lieu!" << endl;
+            } else {
+                cout << "Tong so doc gia da dang ky the thu vien: " << count << endl;
+            }
+            
+            danhsachThe.close();
+        }
+
 };
 
 //Class sách
 class Sach{
-    protected:
+    public:
         string maSach;
         string tenSach;
         string tacGia;
@@ -272,12 +316,16 @@ class Sach{
         }
 
 };
+// Class mượn trả sách
+class MuontraSach : public DocGia, public Sach{
+
+};
 
 int main(){
     DocGia docgia;
     Sach sach;
     int luaChon;
-    string maDocGia, Hovaten, ngaysinh, gioitinh, diachi, soDienthoai;
+    string maThe, Hovaten, ngaysinh, gioitinh, diachi, soDienthoai;
     string maSach, tenSach, tacGia, theLoai;
     int soLuong;
 
@@ -298,7 +346,7 @@ int main(){
                 do {
                     system("cls");
                     cout << "=======QUAN LY DOC GIA=======" << endl;
-                    cout << "1. Dang ky the doc gia" << endl;
+                    cout << "1. Dang ky the Thu vien" << endl;
                     cout << "2. Xoa the doc gia" << endl;
                     cout << "0. Quay lai menu chinh" << endl;
                     cout << "=============================" << endl;
@@ -307,15 +355,15 @@ int main(){
 
                     switch (luaChonDG) {
                         case 1:
-                            docgia.dangkyThe(maDocGia, Hovaten, ngaysinh, gioitinh, diachi, soDienthoai);
+                            docgia.dangkyThe(maThe, Hovaten, ngaysinh, gioitinh, diachi, soDienthoai);
                             cout << "Nhan Enter de tiep tuc...";
                             cin.get();
                             break;
                         case 2:
                             cout << "Nhap ma doc gia can xoa: ";
-                            getline(cin, maDocGia);
-                            docgia.xoaThe(maDocGia);
-                            cout << "Da xoa the doc gia co ma " << maDocGia << endl;
+                            getline(cin, maThe);
+                            docgia.xoaThe(maThe);
+                            cout << "Da xoa the thu vien co ma " << maThe << endl;
                             cout << "Nhan Enter de tiep tuc...";
                             cin.get();
                             break;
